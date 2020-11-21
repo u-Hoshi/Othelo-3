@@ -1,0 +1,13 @@
+@charset "utf-8";
+// 日本語
+#field td {
+  background-color: green;
+  border: 1px solid black;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
+  padding: 1px;
+  font-size: 33px;
+}
