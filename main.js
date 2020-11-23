@@ -104,7 +104,7 @@ function cheng_turn() {
     }
     //ターンを変更
     turn = turn * -1
-    //ターンを後退して、置けるところがあるかを確認する
+    //ターンを交代して、置けるところがあるかを確認する
     //現状の配置をバックアップ
     var ban_bak = new Array(8)
     var check_reverse_cnt = 0
@@ -174,6 +174,76 @@ function cheng_turn() {
             tarn_msg.textContent = "黒の番です";
             break;
     }
+} ;
+
+//指定したセルにターン側の石が置ける確認
+function check_reverse(rowIndex, cell_index) {
+    var reverse_cnt = 0
+    //各方向へリバースできるか確認
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, 0)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, 1)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index,1,0)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, 1)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, 0)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, -1)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 0, -1)
+    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, -1)
+    
+    return reverse_cnt
 }
 
-
+//指定したセルから指定した方向へのreverseを行う
+function line_reverse(row_index, cell_index, add_x, add_y) {
+    //最初に今の盤状況を対比する
+    var ban_bak = new Array(8)
+    for (var i = 0; i < ban_ar.length; i++){
+        ban_bak[i]=new Array(8)
+    }
+    for (var x = 0; x < 8; x++){
+        for (var y = 0; y < 8; y++){
+            ban_bak[x][y]=ban_ar[x][y]
+        }
+    }
+    var line_reverse_cnt = 0
+    var turn_flg = 0
+    var xx = row_index
+    var yy = cell_index
+    //指定したセルから指定された方向へ移動
+    //完了条件になるまで石を返す
+    while (true){
+        xx = xx + add_x
+        yy = yy + add_y
+        //番お箸に到達したら抜ける
+        if (xx < 0 || xx > 7 || yy < 0 || yy > 7) {
+            break;
+        }
+        //移動先のセルに石がなかったら抜ける
+        if (ban_ar[xx][yy] == 0) {
+            break
+        }
+        //移動先のセルが自分自身であれば、石があった事を判断し抜ける
+        if (ban_ar[xx][yy] = turn) {
+            turn_flg = 1
+            break;
+}
+//上記以外は相手の石であるのえ、裏返して裏返した件数の加算
+        ban_ar[xx][yy] = ban_ar[xx][yy] * -1
+        line_reverse_cnt++
+    }
+    //裏返しを行ったが移動席に自分の意思がなかった場合は元に戻す
+    if (line_reverse_cnt > 0) {
+        if (turn_flg == 0) {
+            for (var i = 0; i < 8; i++){
+                for (var ii = 0; ii < 8; ii++) {
+                    ban_ar[i][ii] = ban_bak[i][ii]
+                    line_reverse_cnt=0
+                }
+            }
+        } else {
+            //ちゃんと裏返しが出来たら置いた所に自分の石を置く
+            ban_ar[row_index][cell_index]=turn
+        }
+    }
+//最後に裏返しを行った件数を戻す
+    return line =line_reverse_cnt
+}
