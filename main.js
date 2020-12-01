@@ -67,6 +67,16 @@ function ban_init () {
     //ターンも初期化
     turn = 0
     cheng_turn()
+
+    // 追加実装 途中経過
+    var white_cnt = 0
+     var black_cnt = 0
+    var progress = document.getElementById("progress")
+    progress.textContent="白" + white_cnt+ "黒"+black_cnt
+    document.getElementById("btn_progress").onclick = function() {
+    alert("白" + white_cnt + "黒" + black_cnt)
+    };
+    // 追加実装 途中経過 end
 }
 
 //盤面状況を実際の盤面に反映させる処理
@@ -123,25 +133,33 @@ function cheng_turn() {
             //それ以外は石の数の計算
             switch(ban_ar[x][y]){
                 case 0:
-                check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
-                //バックアップから元に戻す
-                // console.log(check_reverse_cnt)
-                for (var i = 0; i < 8; i++){
-                    for (var ii = 0; ii < 8; ii++){
-                        ban_ar[i][ii]=ban_bak[i][ii]
+                    check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
+                    //バックアップから元に戻す
+                    // console.log(check_reverse_cnt)
+                    for (var i = 0; i < 8; i++){
+                        for (var ii = 0; ii < 8; ii++){
+                            ban_ar[i][ii]=ban_bak[i][ii]
+                        }
+                    }
+                    break;
+                    case -1://マスに白石があるという事
+                    white_cnt++
+                    break
+                    case 1:
+                        black_cnt++
+                        break
+                        
                     }
                 }
-                break;
-                case -1://マスに白石があるという事
-                white_cnt++
-                break
-                case 1:
-                black_cnt++
-                break
-                
             }
-        }
-    }
+            var progress = document.getElementById("progress")
+    progress.textContent = "白" + white_cnt + "黒" + black_cnt
+//     function btn_progress(){
+// alert("白" + white_cnt+ "黒"+black_cnt)
+    // }
+    document.getElementById("btn_progress").onclick = function() {
+        alert("白" + white_cnt + "黒" + black_cnt)
+    };
     //白と黒の合計が8*8=64の場合は終了
     if (white_cnt + black_cnt == 64 || white_cnt == 0 || black_cnt == 0) {
         if (white_cnt == black_cnt) {
@@ -176,7 +194,7 @@ function cheng_turn() {
             break;
     }
 
-} ;
+};
 
 //指定したセルにターン側の石が置ける確認
 function check_reverse(row_index, cell_index) {
@@ -246,7 +264,26 @@ function line_reverse(row_index, cell_index, add_x, add_y) {
             ban_ar[row_index][cell_index]=turn
         }
     }
-//最後に裏返しを行った件数を戻す
+    //最後に裏返しを行った件数を戻す
     return line_reverse_cnt
 }
 
+
+/*
+追加実装文
+*/
+
+
+// 途中経過 pタグに表示
+var white_cnt = 0
+var black_cnt = 0
+var progress = document.getElementById("progress")
+progress.textContent="白" + white_cnt+ "黒"+black_cnt
+
+
+// 途中経過をポップアップに表示
+document.getElementById("btn_progress").onclick = function() {
+    alert("白" + white_cnt + "黒" + black_cnt)
+};
+
+// 途中経過end
