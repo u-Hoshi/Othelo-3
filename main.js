@@ -1,12 +1,12 @@
 // 初期画面起動時
-var turn = 0 //1ターン目；黒―1、白
+var turn = 0 //ターン、黒1；白-1
 //盤面の状況を二次元配列で定義
 var ban_ar = new Array(8) //ここで要素数が8の配列にする
 for (var x = 0; x < ban_ar.length; x++){
     ban_ar[x]=new Array(8)
 }
 // console.log(ban_ar)
-//インデックスは-0からだがarrayは1から数える
+//インデックスは-0からだがarray(要素数)は1から数える
 
 //htmlで定義したテーブルを取得
 var ban = document.getElementById("field")
@@ -20,13 +20,14 @@ ban_init()
 
 //クリックしたときの実行されるイベント
 for (var x = 0; x < 8; x++){
-    for (var y = 0; y < 8; y++)
-    var select_cell = ban.rows[x].cells[y];
-    select_cell.onclick = function () {
-        if (ban_ar[this.parentNode.rowIndex, this.cellIndex] == 0) {
-            if (check_reverse(this.parentNode.rowIndex, this.cellIndex) > 0) {
-                ban_set()
-                cheng_turn()
+    for (var y = 0; y < 8; y++) {
+        var select_cell = ban.rows[x].cells[y];
+        select_cell.onclick = function () {
+            if (ban_ar[this.parentNode.rowIndex][this.cellIndex] == 0) {
+                if (check_reverse(this.parentNode.rowIndex, this.cellIndex) > 0) {
+                    ban_set()
+                    cheng_turn()
+                }
             }
         }
     }
@@ -49,15 +50,13 @@ function ban_new() {
 //ここまで書いたら緑色の盤面が表示される
 
 
-function ban_init() {
+function ban_init () {
     //すべてクリア
     for (var x = 0; x < 8; x++) {
         for (var y = 0; y < 8; y++){
             ban_ar[x][y] = 0
         }
     }
-
-
     //初期状態では真ん中に白黒を配列
     ban_ar[3][3] = -1
     ban_ar[4][3] = 1
@@ -89,17 +88,16 @@ function ban_set() {
             }
             ban.rows[x].cells[y].innerText = stone;
         }
-        
     }
     return true
 }
 
-//ターンを変更する処理
+//ターンを変更する時の処理
 function cheng_turn() {
     var tarn_msg = document.getElementById("view_tarn")
     if (turn == 0) {
         turn = 1
-        turn_msg.textContent = "黒の番です"
+        tarn_msg.textContent = "黒の番です"
         return
     }
     //ターンを変更
@@ -112,13 +110,14 @@ function cheng_turn() {
         ban_bak[i]=new Array(8)
     }
     for (var x = 0; x < 8; x++){
-        for (vary = 0; y < 8; y++){
+        for (var y = 0; y < 8; y++){
             ban_bak[x][y]=ban_ar[x][y]
         }
     }
+    //ここまでバックアップのための記述
     var white_cnt = 0
     var black_cnt = 0
-    for (var x=0; x < 8; x++) {
+    for (var x = 0; x < 8; x++) {
         for (var y = 0; y < 8; y++){
             //空白マスのみおけるのでチェック
             //それ以外は石の数の計算
@@ -126,18 +125,20 @@ function cheng_turn() {
                 case 0:
                 check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
                 //バックアップから元に戻す
-                for (var i = 0; i < 8; ii++){
+                // console.log(check_reverse_cnt)
+                for (var i = 0; i < 8; i++){
                     for (var ii = 0; ii < 8; ii++){
                         ban_ar[i][ii]=ban_bak[i][ii]
                     }
                 }
                 break;
-                case -1:
+                case -1://マスに白石があるという事
                 white_cnt++
                 break
                 case 1:
                 black_cnt++
                 break
+                
             }
         }
     }
@@ -174,20 +175,21 @@ function cheng_turn() {
             tarn_msg.textContent = "黒の番です";
             break;
     }
+
 } ;
 
 //指定したセルにターン側の石が置ける確認
-function check_reverse(rowIndex, cell_index) {
+function check_reverse(row_index, cell_index) {
     var reverse_cnt = 0
     //各方向へリバースできるか確認
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, 0)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, 1)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index,1,0)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, 1)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, 0)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 1, -1)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, 0, -1)
-    reverse_cnt = reverse_cnt + line_reverse(rowIndex, cell_index, -1, -1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, 0)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, 1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 0, 1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 1, 1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 1, 0)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 1, -1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 0, -1)
+    reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, -1)
     
     return reverse_cnt
 }
@@ -213,7 +215,7 @@ function line_reverse(row_index, cell_index, add_x, add_y) {
     while (true){
         xx = xx + add_x
         yy = yy + add_y
-        //番お箸に到達したら抜ける
+        //盤の端」に到達したら抜ける
         if (xx < 0 || xx > 7 || yy < 0 || yy > 7) {
             break;
         }
@@ -222,21 +224,21 @@ function line_reverse(row_index, cell_index, add_x, add_y) {
             break
         }
         //移動先のセルが自分自身であれば、石があった事を判断し抜ける
-        if (ban_ar[xx][yy] = turn) {
+        if (ban_ar[xx][yy] == turn) {
             turn_flg = 1
             break;
-}
-//上記以外は相手の石であるのえ、裏返して裏返した件数の加算
+        }
+        //上記以外は相手の石であるので、裏返して裏返した件数の加算
         ban_ar[xx][yy] = ban_ar[xx][yy] * -1
         line_reverse_cnt++
     }
-    //裏返しを行ったが移動席に自分の意思がなかった場合は元に戻す
+    //裏返しを行ったが移動先に自分の石がなかった場合は元に戻す
     if (line_reverse_cnt > 0) {
         if (turn_flg == 0) {
             for (var i = 0; i < 8; i++){
                 for (var ii = 0; ii < 8; ii++) {
                     ban_ar[i][ii] = ban_bak[i][ii]
-                    line_reverse_cnt=0
+                    line_reverse_cnt = 0
                 }
             }
         } else {
@@ -245,5 +247,6 @@ function line_reverse(row_index, cell_index, add_x, add_y) {
         }
     }
 //最後に裏返しを行った件数を戻す
-    return line =line_reverse_cnt
+    return line_reverse_cnt
 }
+
