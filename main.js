@@ -69,8 +69,8 @@ function ban_init () {
     cheng_turn()
 
     // 追加実装 途中経過
-    var white_cnt = 0
-     var black_cnt = 0
+    var white_cnt = 2
+     var black_cnt = 2
     var progress = document.getElementById("progress")
     progress.textContent="白" + white_cnt+ "黒"+black_cnt
     document.getElementById("btn_progress").onclick = function() {
@@ -116,68 +116,59 @@ function cheng_turn() {
     //現状の配置をバックアップ
     var ban_bak = new Array(8)
     var check_reverse_cnt = 0
-    for (var i = 0; i < ban_ar.length; i++){
-        ban_bak[i]=new Array(8)
+    for (var i = 0; i < ban_ar.length; i++) {
+        ban_bak[i] = new Array(8)
     }
-    for (var x = 0; x < 8; x++){
-        for (var y = 0; y < 8; y++){
-            ban_bak[x][y]=ban_ar[x][y]
+    for (var x = 0; x < 8; x++) {
+        for (var y = 0; y < 8; y++) {
+            ban_bak[x][y] = ban_ar[x][y]
         }
     }
     //ここまでバックアップのための記述
     var white_cnt = 0
     var black_cnt = 0
     for (var x = 0; x < 8; x++) {
-        for (var y = 0; y < 8; y++){
+        for (var y = 0; y < 8; y++) {
             //空白マスのみおけるのでチェック
             //それ以外は石の数の計算
-            switch(ban_ar[x][y]){
+            switch (ban_ar[x][y]) {
                 case 0:
                     check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
                     //バックアップから元に戻す
                     // console.log(check_reverse_cnt)
-                    for (var i = 0; i < 8; i++){
-                        for (var ii = 0; ii < 8; ii++){
-                            ban_ar[i][ii]=ban_bak[i][ii]
+                    for (var i = 0; i < 8; i++) {
+                        for (var ii = 0; ii < 8; ii++) {
+                            ban_ar[i][ii] = ban_bak[i][ii]
                         }
                     }
                     break;
-                    case -1://マスに白石があるという事
-                    white_cnt++
+                case -1://マスに白石があるという事
+                    white_cnt = white_cnt + 1
                     break
-                    case 1:
-                        black_cnt++
-                        break
-                        
-                    }
-                }
+                case 1:
+                    black_cnt = black_cnt + 1
+                    break
             }
-            var progress = document.getElementById("progress")
-    progress.textContent = "白" + white_cnt + "黒" + black_cnt
-//     function btn_progress(){
-// alert("白" + white_cnt+ "黒"+black_cnt)
-    // }
-    document.getElementById("btn_progress").onclick = function() {
-        alert("白" + white_cnt + "黒" + black_cnt)
-    };
+        }
+    }
     //白と黒の合計が8*8=64の場合は終了
     if (white_cnt + black_cnt == 64 || white_cnt == 0 || black_cnt == 0) {
         if (white_cnt == black_cnt) {
             alert("引き分けです")
         } else if (white_cnt > black_cnt) {
-            alert("勝負は黒："+black_cnt+"対、白："+white_cnt+"で白の勝ち")
+            alert("勝負は黒：" + black_cnt + "対、白：" + white_cnt + "で白の勝ち")
         } else {
-            alert("勝負は黒:"+black_cnt+"対、白："+white_cnt+"で黒の勝ちです")
+            alert("勝負は黒:" + black_cnt + "対、白：" + white_cnt + "で黒の勝ちです")
         }
     } else {
         //置ける場所がない場合はターンを相手に戻す
         if (check_reverse_cnt == 0) {
             switch (turn) {
-                    case -1:
+                case -1:
                     alert("白のおける場所がありません。続けて黒の番になります")
                     turn = turn * -1
                     break;
-                    case 1:
+                case 1:
                     alert("黒のおける場所がありません。続けて白の番となります。")
                     turn = turn * -1
                     break;
@@ -193,13 +184,73 @@ function cheng_turn() {
             tarn_msg.textContent = "黒の番です";
             break;
     }
+    // 独自機能
 
+    // 途中経過確認
+    var progress = document.getElementById("progress")
+    progress.textContent = "白" + white_cnt + "黒" + black_cnt
+    //     function btn_progress(){
+    // alert("白" + white_cnt+ "黒"+black_cnt)
+    // }ボツ
+    document.getElementById("btn_progress").onclick = function () {
+        alert("白" + white_cnt + "黒" + black_cnt)
+    };
+    //途中経過確認end
+    
+    // 特定のマスだけ高ポイント
+    // switch(ban_ar[3][4]){
+    //             case 0:
+    //                 check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
+    //                 //バックアップから元に戻す
+    //                 // console.log(check_reverse_cnt)
+    //                 for (var i = 0; i < 8; i++){
+    //                     for (var ii = 0; ii < 8; ii++){
+    //                         ban_ar[i][ii]=ban_bak[i][ii]
+    //                     }
+    //                 }
+    //             break;
+    //             case -1://マスに白石があるという事
+    //                 white_cnt = white_cnt + 100;
+    //             break
+    //             case 1:
+    //                 black_cnt = black_cnt + 100;
+    //             break
+    // }
+    // 特定のマスだけ高ポイントend
+
+    // 特定のマスに石を置いた時点で勝敗決着
+    // switch(ban_ar[1][1]){
+    //             case 0:
+    //                 check_reverse_cnt = check_reverse_cnt + check_reverse(x, y)
+    //                 //バックアップから元に戻す
+    //                 // console.log(check_reverse_cnt)
+    //                 for (var i = 0; i < 8; i++){
+    //                     for (var ii = 0; ii < 8; ii++){
+    //                         ban_ar[i][ii]=ban_bak[i][ii]
+    //                     }
+    //                 }
+    //             break;
+    //             case -1://マスに白石があるという事
+    //                 alert("独自ルールにより白勝ち")
+    //                 tarn_msg.textContent = "白の勝ち";
+    //             break
+    //             case 1:
+    //                 alert("独自ルールにより黒勝ち")
+    //                 tarn_msg.textContent = "黒の勝ち";
+    //             break
+    // }
+    if (ban_ar[2][2] == 1) {
+        alert("白")
+    } else if(ban_ar[2][2] == -1) {
+   alert("黒")
+    }
+    // 特定のマスに石を置いた時点で勝敗決着end
 };
 
 //指定したセルにターン側の石が置ける確認
 function check_reverse(row_index, cell_index) {
     var reverse_cnt = 0
-    //各方向へリバースできるか確認
+    // 各方向へリバースできるか確認
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, 0)
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, 1)
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 0, 1)
@@ -208,6 +259,7 @@ function check_reverse(row_index, cell_index) {
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 1, -1)
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, 0, -1)
     reverse_cnt = reverse_cnt + line_reverse(row_index, cell_index, -1, -1)
+
     
     return reverse_cnt
 }
@@ -275,8 +327,8 @@ function line_reverse(row_index, cell_index, add_x, add_y) {
 
 
 // 途中経過 pタグに表示
-var white_cnt = 0
-var black_cnt = 0
+var white_cnt = 2
+var black_cnt = 2
 var progress = document.getElementById("progress")
 progress.textContent="白" + white_cnt+ "黒"+black_cnt
 
